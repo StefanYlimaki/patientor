@@ -1,6 +1,8 @@
+
 import React from "react";
 import axios from "axios";
 import { Box, Table, Button, TableHead, Typography } from "@material-ui/core";
+import { useNavigate } from 'react-router-dom';
 
 import { PatientFormValues } from "../AddPatientModal/AddPatientForm";
 import AddPatientModal from "../AddPatientModal";
@@ -14,7 +16,7 @@ import { TableBody } from "@material-ui/core";
 
 const PatientListPage = () => {
   const [{ patients }, dispatch] = useStateValue();
-
+  const navigate = useNavigate();
   const [modalOpen, setModalOpen] = React.useState<boolean>(false);
   const [error, setError] = React.useState<string>();
 
@@ -44,6 +46,27 @@ const PatientListPage = () => {
     }
   };
 
+  const handleClickOnPatient = async (id: string) => {
+    try {
+      if(!patients[id]){
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const { data: newPatient } = await axios.get(`${apiBaseUrl}/patients/${id}`);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        dispatch({ type: "ADD_PATIENT", payload: newPatient });
+      }
+      navigate(`/patient/${id}`);
+
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        console.error(error?.response?.data || "Unrecognized axios error");
+        setError(String(error?.response?.data?.error) || "Unrecognized axios error");
+      } else {
+        console.error("Unknown error", error);
+        setError("Unknown error");
+      }
+    }
+  };
+
   return (
     <div className="App">
       <Box>
@@ -63,7 +86,7 @@ const PatientListPage = () => {
         <TableBody>
           {Object.values(patients).map((patient: Patient) => (
             <TableRow key={patient.id}>
-              <TableCell>{patient.name}</TableCell>
+              <TableCell style={{ cursor: 'pointer' }} onClick={() => handleClickOnPatient(patient.id) }>{patient.name}</TableCell>
               <TableCell>{patient.gender}</TableCell>
               <TableCell>{patient.occupation}</TableCell>
               <TableCell>

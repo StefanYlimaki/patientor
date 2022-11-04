@@ -6,6 +6,7 @@ import { Button, Divider, Container } from "@material-ui/core";
 import { apiBaseUrl } from "./constants";
 import { useStateValue } from "./state";
 import { Patient } from "./types";
+import PatientElement from "./components/PatientElement";
 
 import PatientListPage from "./PatientListPage";
 import { Typography } from "@material-ui/core";
@@ -41,6 +42,7 @@ const App = () => {
           <Divider hidden />
           <Routes>
             <Route path="/" element={<PatientListPage />} />
+            <Route path='/patient/:id' element={<PatientElement />} />
           </Routes>
         </Container>
       </Router>

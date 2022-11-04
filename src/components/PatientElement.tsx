@@ -6,7 +6,7 @@ import { Diagnosis, Gender } from "../types";
 import { useEffect, useState } from "react";
 import { apiBaseUrl } from "../constants";
 import axios from "axios";
-import {v1 as uuid } from 'uuid'; 
+import EntryElement from "./EntryElement";
 
 const PatientElement = () => {
   const [{ patients }] = useStateValue();
@@ -35,20 +35,8 @@ const PatientElement = () => {
       <h3>Entries: </h3>
       { 
       patient?.entries.map(e => 
-        <div key={e.id}>
-          { e.date } { e.description }
-          <div>
-            {
-              diagnoses.map(diagnose => 
-                e.diagnosisCodes?.map(e => 
-                  diagnose.code === String(e)
-                  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
-                  ? <li key={ uuid() }>{ diagnose.code } { diagnose.name }</li>
-                  : <div key={ diagnose.code }></div>
-                )
-              )
-            }
-          </div>
+        <div key={e.id} style={{ paddingTop: "10px" }}>
+          <EntryElement entry={e} diagnoses={diagnoses}/>
         </div>) 
       }
     </div>
